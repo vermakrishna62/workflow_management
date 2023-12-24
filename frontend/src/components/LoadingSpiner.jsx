@@ -4,13 +4,19 @@ import { ClipLoader } from "react-spinners";
 
 const override = css`
   display: block;
-  margin: 0 auto;
+`;
+
+const spinnerContainer = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 `;
 
 const LoadingSpinner = () => {
   return (
-    <div className="sweet-loading">
-      <ClipLoader css={override} size={50} color={"#123abc"} loading={true} />
+    <div className="sweet-loading" css={spinnerContainer}>
+      <ClipLoader size={50} color={"#123abc"} loading={true} />
     </div>
   );
 };

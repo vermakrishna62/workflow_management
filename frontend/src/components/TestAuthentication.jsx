@@ -68,6 +68,7 @@ function TestAuthentication() {
       localStorage.setItem("refresh_token", response.data.refresh);
 
       const access_token = response.data.access;
+
       // const refresh_token = response.data.refresh;
       console.log(access_token);
 

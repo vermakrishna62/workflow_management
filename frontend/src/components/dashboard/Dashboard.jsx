@@ -17,10 +17,26 @@ import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { mainListItems, secondaryListItems } from "./listItems";
+import { mainListItems } from "./listItems";
 import Chart from "./Chart";
 import Deposits from "./Deposits";
 import Orders from "./Orders";
+import { Link as SetLink } from "react-router-dom";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import PeopleIcon from "@mui/icons-material/People";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import LayersIcon from "@mui/icons-material/Layers";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import LeaveRequest from "../LeaveRequest";
+import PromotionRequest from "../PromotionRequest";
+import AppraisalRequest from "../AppraisalRequest";
 
 function Copyright(props) {
   return (
@@ -39,6 +55,9 @@ function Copyright(props) {
     </Typography>
   );
 }
+
+import axios from "axios";
+import TransactionHistory from "../TransactionHistory";
 
 const drawerWidth = 240;
 
@@ -90,123 +109,199 @@ const Drawer = styled(MuiDrawer, {
 const defaultTheme = createTheme();
 
 export default function Dashboard({ user }) {
+  const [curState, setCurState] = React.useState("dashboard");
+
+  const [empdata, setEmpdata] = React.useState();
+
+  const [flag, setFlag] = React.useState(false);
+
+  const getEmpData = async () => {
+    await axios
+      .get("employees/" + user + "/", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data.emp_data[0]);
+        setEmpdata(res.data.emp_data[0]);
+        setFlag(true);
+      })
+      .catch((e) => console.log(e));
+  };
+
+  React.useEffect(() => {
+    getEmpData();
+    () => {
+      console.log("clean up");
+    };
+  }, []);
+
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
-  console.log(user);
-
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              pr: "24px", // keep right padding when drawer closed
-            }}
-          >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
+    flag && (
+      <ThemeProvider theme={defaultTheme}>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <AppBar position="absolute" open={open}>
+            <Toolbar
               sx={{
-                marginRight: "36px",
-                ...(open && { display: "none" }),
+                pr: "24px", // keep right padding when drawer closed
               }}
             >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                onClick={toggleDrawer}
+                sx={{
+                  marginRight: "36px",
+                  ...(open && { display: "none" }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography
+                component="h1"
+                variant="h6"
+                color="inherit"
+                noWrap
+                sx={{ flexGrow: 1 }}
+              >
+                {empdata ? empdata.user.username : ""}
+              </Typography>
+              <IconButton>
+                <SetLink
+                  to="/logout"
+                  style={{ color: "white", textDecoration: "none" }}
+                >
+                  <LogoutRoundedIcon color="white" />
+                </SetLink>
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+          <Drawer variant="permanent" open={open}>
+            <Toolbar
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                px: [1],
+              }}
             >
-              {user ? user : "hello"}
-            </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
+              <IconButton onClick={toggleDrawer}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </Toolbar>
+            <Divider />
+            <List component="nav">
+              <ListItemButton onClick={() => setCurState("dashboard")}>
+                <ListItemIcon>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard" />
+              </ListItemButton>
+              <ListItemButton onClick={() => setCurState("leave-request")}>
+                <ListItemIcon>
+                  <ShoppingCartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Leave Request" />
+              </ListItemButton>
+              <ListItemButton onClick={() => setCurState("promotion-request")}>
+                <ListItemIcon>
+                  <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Promotion Request" />
+              </ListItemButton>
+              <ListItemButton onClick={() => setCurState("appraisal-request")}>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Appraisal Request" />
+              </ListItemButton>
+              <ListItemButton onClick={() => setCurState("transactions")}>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Transaction History" />
+              </ListItemButton>
+              {/* <Divider sx={{ my: 1 }} />
+            {secondaryListItems} */}
+            </List>
+          </Drawer>
+          <Box
+            component="main"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              px: [1],
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[100]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "100vh",
+              overflow: "auto",
             }}
           >
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List>
-        </Drawer>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
+            <Toolbar />
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={3}>
+                {/* Chart */}
+
+                {curState === "dashboard" && (
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <Orders data={empdata} />
+                    </Paper>
+                  </Grid>
+                )}
+                {curState === "leave-request" && (
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <LeaveRequest data={empdata} />
+                    </Paper>
+                  </Grid>
+                )}
+                {curState === "promotion-request" && (
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <PromotionRequest data={empdata} />
+                    </Paper>
+                  </Grid>
+                )}
+                {curState === "appraisal-request" && (
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <AppraisalRequest data={empdata} />
+                    </Paper>
+                  </Grid>
+                )}
+                {/* transactions */}
+                {curState === "transactions" && (
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <TransactionHistory data={empdata} />
+                    </Paper>
+                  </Grid>
+                )}
               </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Orders />
-                </Paper>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
+              <Copyright sx={{ pt: 4 }} />
+            </Container>
+          </Box>
         </Box>
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
+    )
   );
 }

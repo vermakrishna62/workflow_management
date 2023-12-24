@@ -31,6 +31,7 @@ urlpatterns = [
     path('register/',reg_user),
     
      path('employees/<str:username>/', employee_detail, name='emp-detail'),
+     path('emp-transaction/<str:username>/',transaction_history)
 
     
 ]

@@ -22,18 +22,49 @@ import json
 
 @api_view(['GET'])
 def employee_detail(self,username):
-    print(username)
-    
-    obj = EmployeeDetail.objects.all()
-    serializer = EmployeeDetailSerializer(obj,many=True)
-    
-    return Response({'username': username, 'data': serializer.data})
+    try:
+        # Assuming the username is unique in the User model
+        user = User.objects.get(username=username)
+        obj = EmployeeDetail.objects.filter(user=user)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+
+    serializer = EmployeeDetailSerializer(obj, many=True)
+    return Response({'emp_data': serializer.data})
+
+@api_view(['GET'])
+def transaction_history(self,username):
+    try:
+        leave_transaction = LeaveRequest.objects.filter(user=username)
+        promotion_transaction = PromotionRequest.objects.filter(user=username)
+        appraisal_transaction = AppraisalRequest.objects.filter(user=username)
+        
+        transaction_data = {}
+        transaction_data['leave_history'] = LeaveRequestSerializer(leave_transaction,many=True).data
+        transaction_data['promotion_history'] = PromotionRequestSerializer(promotion_transaction,many=True).data
+        transaction_data['appraisal_history'] = AppraisalRequestSerializer(appraisal_transaction,many=True).data
+        
+    except:
+        return Response({'error': 'Data Loading Issue'}, status=404)
+    return Response({"transaction_data":transaction_data})
 
 class HomeView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        content = {"message": "Welcome to JWT Authentication page !"}
+        print(request.user,type(request.user))
+        
+        user = User.objects.get(username=request.user)
+        
+        data_list = {}
+        
+        data_list['username'] = user.username
+        data_list['email'] = user.email
+        data_list['first_name'] = user.first_name
+        data_list['last_name'] = user.last_name
+        
+        
+        content = {"data": data_list}
         return Response(content)
 
 

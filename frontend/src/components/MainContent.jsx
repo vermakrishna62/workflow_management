@@ -12,9 +12,7 @@ const MainContent = () => {
 
   const getEmpDetail = async () => {
     try {
-      const response = axios.get(
-        "http://localhost:8000/api/employees/test121/"
-      );
+      const response = axios.get("http://localhost:8000/api/employees/emp-1/");
 
       console.table(response);
     } catch (err) {
