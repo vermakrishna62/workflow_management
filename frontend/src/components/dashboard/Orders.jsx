@@ -62,7 +62,9 @@ function preventDefault(event) {
 export default function Orders({ data }) {
   return (
     <React.Fragment>
-      <Title>Recent Orders - {data.user.username}</Title>
+      <Title>
+        Name - {data.user.first_name} {data.user.last_name}
+      </Title>
       <Table size="small">
         <TableHead>
           <TableRow>

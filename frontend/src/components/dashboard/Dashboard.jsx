@@ -46,11 +46,7 @@ function Copyright(props) {
       align="center"
       {...props}
     >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
+      Worlflow Management Dashboard {new Date().getFullYear()}
       {"."}
     </Typography>
   );
@@ -58,6 +54,7 @@ function Copyright(props) {
 
 import axios from "axios";
 import TransactionHistory from "../TransactionHistory";
+import { Button } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -123,12 +120,15 @@ export default function Dashboard({ user }) {
         },
       })
       .then((res) => {
-        console.log(res.data.emp_data[0]);
         setEmpdata(res.data.emp_data[0]);
         setFlag(true);
       })
       .catch((e) => console.log(e));
   };
+
+  {
+    empdata && console.log(empdata);
+  }
 
   React.useEffect(() => {
     getEmpData();

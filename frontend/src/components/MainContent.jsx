@@ -14,7 +14,7 @@ const MainContent = () => {
     try {
       const response = axios.get("http://localhost:8000/api/employees/emp-1/");
 
-      console.table(response);
+      console.log(response);
     } catch (err) {
       console.log(err);
     }

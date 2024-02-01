@@ -27,7 +27,6 @@ const HomeAuth = () => {
             },
           })
           .catch((err) => setMsg("error"));
-        console.log("Data List :- ");
         const username = data.data.username;
         setUserdata(username);
 

@@ -79,6 +79,11 @@ function TestAuthentication() {
 
       setNavigate(true);
     } catch (e) {
+      alert("Invalid credentials");
+
+      setUsername("");
+      setPassword("");
+
       toast.error("Invalid Login Credentials", { position: "top-center" });
       navigate_user("/");
     }
